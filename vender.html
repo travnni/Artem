@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Vender mi Vivienda</title>
+  <link href="https://fonts.googleapis.com/css2?family=Glacial+Indifference&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      background-color: #0a0a0a;
+      color: #f8f3e8;
+      font-family: 'Glacial Indifference', sans-serif;
+      padding: 40px;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+
+    h1 {
+      font-size: 48px;
+      margin-bottom: 30px;
+      letter-spacing: 2px;
+      font-weight: 300;
+    }
+
+    form {
+      max-width: 600px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    input, textarea, select {
+      background-color: #1a1a1a;
+      color: #f8f3e8;
+      border: 1px solid #444;
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 16px;
+      transition: all 0.3s ease;
+    }
+
+    input:focus, textarea:focus, select:focus {
+      border-color: #f8f3e8;
+      outline: none;
+      transform: scale(1.02);
+    }
+
+    button {
+      padding: 14px;
+      font-size: 16px;
+      background-color: #f8f3e8;
+      color: #0a0a0a;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    button:hover {
+      background-color: #e7e0cd;
+      transform: scale(1.03);
+    }
+
+    .tel-group {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .tel-group select {
+      flex: 1 1 180px;
+    }
+
+    .tel-group input[type="tel"] {
+      flex: 2 1 300px;
+    }
+
+    iframe {
+      width: 100%;
+      height: 300px;
+      border: none;
+      border-radius: 12px;
+      margin-top: 10px;
+    }
+
+    .agradecimiento {
+      display: none;
+      margin-top: 30px;
+      font-size: 20px;
+      color: #b9b2a5;
+      animation: fadein 0.6s ease;
+    }
+
+    @keyframes fadein {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <h1>VACCT — Vende tu Vivienda</h1>
+
+  <form id="viviendaForm" action="https://formspree.io/f/mpwldklj" method="POST">
+    <input type="text" name="nombre" placeholder="Tu nombre completo" required />
+    <input type="email" name="email" placeholder="Correo electrónico" required />
+
+    <div class="tel-group">
+      <select name="pais" required>
+        <option value="+34">🇪🇸 +34 (España)</option>
+        <option value="+1">🇺🇸 +1 (EE.UU.)</option>
+        <option value="+44">🇬🇧 +44 (Reino Unido)</option>
+        <option value="+33">🇫🇷 +33 (Francia)</option>
+        <option value="+49">🇩🇪 +49 (Alemania)</option>
+        <option value="+52">🇲🇽 +52 (México)</option>
+        <option value="+55">🇧🇷 +55 (Brasil)</option>
+        <option value="+351">🇵🇹 +351 (Portugal)</option>
+        <option value="+57">🇨🇴 +57 (Colombia)</option>
+        <!-- Puedes añadir más -->
+      </select>
+
+      <input type="tel" name="telefono" placeholder="Número de teléfono" required />
+    </div>
+
+    <label for="horario" style="text-align:left;">Horario preferido para contactar:</label>
+    <select name="horario" id="horario" required>
+      <option value="" disabled selected>Selecciona una franja</option>
+      <option value="mañana">🕘 Mañana (09:00 - 12:00)</option>
+      <option value="mediodia">🕛 Mediodía (12:00 - 14:00)</option>
+      <option value="tarde">🕓 Tarde (16:00 - 19:00)</option>
+      <option value="noche">🌙 Noche (19:00 - 21:00)</option>
+      <option value="cualquier_hora">📞 A cualquier hora del día</option>
+    </select>
+
+    <input type="text" name="direccion" id="direccion" placeholder="Dirección del inmueble" required />
+    <iframe id="mapa" src="" loading="lazy"></iframe>
+
+    <input type="text" name="precio" placeholder="¿A qué precio espera vender su vivienda?" required />
+    <textarea name="detalles" rows="5" placeholder="Detalles sobre la vivienda, ubicación, características..." required></textarea>
+
+    <button type="submit">Enviar formulario</button>
+  </form>
+
+  <div class="agradecimiento" id="mensajeFinal">
+    ¡Gracias por enviar tu información! Me pondré en contacto contigo lo antes posible. 💼
+  </div>
+
+  <script>
+    const form = document.getElementById("viviendaForm");
+    const mensaje = document.getElementById("mensajeFinal");
+    const direccion = document.getElementById("direccion");
+    const mapa = document.getElementById("mapa");
+
+    direccion.addEventListener("input", () => {
+      const query = encodeURIComponent(direccion.value);
+      mapa.src = `https://maps.google.com/maps?q=${query}&output=embed`;
+    });
+
+    form.addEventListener("submit", function(e) {
+      e.preventDefault();
+      const data = new FormData(form);
+      fetch(form.action, {
+        method: "POST",
+        body: data,
+        headers: { 'Accept': 'application/json' }
+      }).then(() => {
+        form.reset();
+        mapa.src = "";
+        mensaje.style.display = "block";
+      }).catch(() => {
+        alert("Error al enviar el formulario.");
+      });
+    });
+  </script>
+</body>
+</html>
